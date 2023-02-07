@@ -2,9 +2,10 @@ package com.andersontaraujo.keepmygaming.games.controllers;
 
 import com.andersontaraujo.keepmygaming.games.dtos.CreateGameRequestDTO;
 import com.andersontaraujo.keepmygaming.games.dtos.GameResponseDTO;
+import com.andersontaraujo.keepmygaming.games.dtos.SearchGamesResponseDTO;
 import com.andersontaraujo.keepmygaming.games.dtos.UpdateGameRequestDTO;
 import com.andersontaraujo.keepmygaming.games.services.GameService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,28 +14,37 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import java.net.URI;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v1/games")
 public class GameController {
 
-    private GameService gameService;
+    private final GameService gameService;
 
-    @Autowired
-    public GameController(GameService gameService) {
-        this.gameService = gameService;
+    @GetMapping("/all")
+    public ResponseEntity<List<GameResponseDTO>> retrieveAllGames() {
+        List<GameResponseDTO> games = gameService.retrieveAllGames();
+        return ResponseEntity.ok(games);
     }
 
     @GetMapping
-    public ResponseEntity<List<GameResponseDTO>> searchGames() {
-        List<GameResponseDTO> games = gameService.searchGames();
-        return ResponseEntity.ok(games);
+    public ResponseEntity<SearchGamesResponseDTO> searchGames(@RequestParam(required = false) String name,
+                                                              @RequestParam(required = false) Integer yearOfRelease,
+                                                              @RequestParam int page,
+                                                              @RequestParam int size,
+                                                              @RequestParam String sortBy,
+                                                              @Pattern(regexp = "ASC|DESC") @RequestParam String sortByDirection) {
+        SearchGamesResponseDTO response = gameService.searchGames(name, yearOfRelease, page, size, sortBy, sortByDirection);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
