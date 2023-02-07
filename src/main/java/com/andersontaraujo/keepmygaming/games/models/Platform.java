@@ -1,5 +1,5 @@
 package com.andersontaraujo.keepmygaming.games.models;
 
 public enum Platform {
-    PS4, PS5, PS3, PC, XBOX, XBOX_ONE
+    PS3, PS4, PS5, XBOX, XBOX_ONE, XBOX_SERIES_XS, PC
 }
