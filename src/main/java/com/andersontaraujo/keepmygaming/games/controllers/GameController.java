@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 import java.net.URI;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class GameController {
                                                               @RequestParam int page,
                                                               @RequestParam int size,
                                                               @RequestParam String sortBy,
-                                                              @Pattern(regexp = "ASC|DESC") @RequestParam String sortByDirection) {
+                                                              @RequestParam String sortByDirection) {
         SearchGamesResponseDTO response = gameService.searchGames(name, yearOfRelease, page, size, sortBy, sortByDirection);
         return ResponseEntity.ok(response);
     }
