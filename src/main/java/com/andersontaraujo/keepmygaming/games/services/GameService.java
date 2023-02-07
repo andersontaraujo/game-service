@@ -3,6 +3,7 @@ package com.andersontaraujo.keepmygaming.games.services;
 import com.andersontaraujo.keepmygaming.games.dtos.CreateGameRequestDTO;
 import com.andersontaraujo.keepmygaming.games.dtos.GameResponseDTO;
 import com.andersontaraujo.keepmygaming.games.dtos.UpdateGameRequestDTO;
+import com.andersontaraujo.keepmygaming.games.exceptions.GameNotFoundException;
 import com.andersontaraujo.keepmygaming.games.models.Game;
 import com.andersontaraujo.keepmygaming.games.repositories.GameRepository;
 import org.modelmapper.ModelMapper;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.andersontaraujo.keepmygaming.games.exceptions.ErrorMessage.GAME_NOT_FOUND_MESSAGE;
 
 @Service
 public class GameService {
@@ -38,7 +41,7 @@ public class GameService {
     public GameResponseDTO findGameById(String id) {
         return gameRepository.findById(id)
                 .map(g -> modelMapper.map(g, GameResponseDTO.class))
-                .orElseThrow(() -> new RuntimeException("Game with [" + id + "] NOT FOUND."));
+                .orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND_MESSAGE, id));
     }
 
     public GameResponseDTO updateGame(String id, UpdateGameRequestDTO updateGameRequest) {
@@ -48,12 +51,12 @@ public class GameService {
                     Game gameUpdated = gameRepository.save(gameToUpdate);
                     return modelMapper.map(gameUpdated, GameResponseDTO.class);
                 })
-                .orElseThrow(() -> new RuntimeException("Game with [" + id + "] NOT FOUND."));
+                .orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND_MESSAGE, id));
     }
 
     public void deleteGame(String id) {
         Game gameToDelete = gameRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Game with [" + id + "] NOT FOUND."));
+                .orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND_MESSAGE, id));
         gameRepository.delete(gameToDelete);
     }
 }
