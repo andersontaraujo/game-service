@@ -21,15 +21,19 @@ public class GameCustomRepositoryImpl implements GameCustomRepository {
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public Page<Game> searchGames(String name, Integer yearOfRelease, int page, int size, String sortBy, String sortByDirection) {
+    public Page<Game> searchGames(String name, String publisherName, Integer yearOfRelease, int page, int size, String sortByField, String sortByDirection) {
         Pageable pageable = PageRequest.of(page-1, size);
 
         Query query = new Query()
                 .with(pageable)
-                .with(Sort.by(Sort.Direction.fromString(sortByDirection), sortBy));
+                .with(Sort.by(Sort.Direction.fromString(sortByDirection), sortByField));
 
         if (name != null) {
             query.addCriteria(Criteria.where("name").regex(name));
+        }
+
+        if (publisherName != null) {
+            query.addCriteria(Criteria.where("publisherName").regex(publisherName));
         }
 
         if (yearOfRelease != null) {

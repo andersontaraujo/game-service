@@ -37,12 +37,13 @@ public class GameController {
 
     @GetMapping
     public ResponseEntity<SearchGamesResponseDTO> searchGames(@RequestParam(required = false) String name,
+                                                              @RequestParam(required = false) String publisherName,
                                                               @RequestParam(required = false) Integer yearOfRelease,
                                                               @RequestParam int page,
                                                               @RequestParam int size,
-                                                              @RequestParam String sortBy,
+                                                              @RequestParam String sortByField,
                                                               @RequestParam String sortByDirection) {
-        SearchGamesResponseDTO response = gameService.searchGames(name, yearOfRelease, page, size, sortBy, sortByDirection);
+        SearchGamesResponseDTO response = gameService.searchGames(name, publisherName, yearOfRelease, page, size, sortByField, sortByDirection);
         return ResponseEntity.ok(response);
     }
 

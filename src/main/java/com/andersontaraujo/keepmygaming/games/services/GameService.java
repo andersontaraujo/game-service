@@ -31,9 +31,9 @@ public class GameService {
                 .collect(Collectors.toList());
     }
 
-    public SearchGamesResponseDTO searchGames(String name, Integer yearOfRelease, int page, int size, String sortBy, String sortByDirection) {
+    public SearchGamesResponseDTO searchGames(String name, String publisherName, Integer yearOfRelease, int page, int size, String sortByField, String sortByDirection) {
 
-        Page<Game> games = gameRepository.searchGames(name, yearOfRelease, page, size, sortBy, sortByDirection);
+        Page<Game> games = gameRepository.searchGames(name, publisherName, yearOfRelease, page, size, sortByField, sortByDirection);
 
         List<GameResponseDTO> content = games.getContent().stream()
                 .map(game -> modelMapper.map(game, GameResponseDTO.class))

@@ -1,6 +1,7 @@
 package com.andersontaraujo.keepmygaming.games.dtos;
 
 import com.andersontaraujo.keepmygaming.games.models.Platform;
+import com.andersontaraujo.keepmygaming.games.validators.UniqueName;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Data
 @Builder(toBuilder = true)
 public class CreateGameRequestDTO {
+    @UniqueName
     @NotBlank(message = "The field 'name' must be fulfilled")
     private String name;
     private String publisherName;
