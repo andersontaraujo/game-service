@@ -49,25 +49,32 @@ public class GameService {
     }
 
     public GameResponseDTO createGame(CreateGameRequestDTO createGameRequest) {
-        Game gameToCreate = modelMapper.map(createGameRequest, Game.class);
-        Game savedGame = gameRepository.save(gameToCreate);
+        Game savedGame = gameRepository.save(modelMapper.map(createGameRequest, Game.class));
         return modelMapper.map(savedGame, GameResponseDTO.class);
     }
 
     public GameResponseDTO findGameById(String id) {
         return gameRepository.findById(id)
-                .map(g -> modelMapper.map(g, GameResponseDTO.class))
+                .map(game -> modelMapper.map(game, GameResponseDTO.class))
                 .orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND_MESSAGE, id));
     }
 
     public GameResponseDTO updateGame(String id, UpdateGameRequestDTO updateGameRequest) {
         return gameRepository.findById(id)
-                .map(g -> {
-                    Game gameToUpdate = modelMapper.map(updateGameRequest, Game.class);
-                    Game gameUpdated = gameRepository.save(gameToUpdate);
+                .map(game -> {
+                    Game gameUpdated = gameRepository.save(updateGameWithNewInfo(game, updateGameRequest));
                     return modelMapper.map(gameUpdated, GameResponseDTO.class);
                 })
                 .orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND_MESSAGE, id));
+    }
+
+    private Game updateGameWithNewInfo(Game game, UpdateGameRequestDTO updateGameRequest) {
+        return game.toBuilder()
+                .name(updateGameRequest.getName())
+                .publisherName(updateGameRequest.getPublisherName())
+                .developerName(updateGameRequest.getDeveloperName())
+                .platforms(updateGameRequest.getPlatforms())
+                .build();
     }
 
     public void deleteGame(String id) {
