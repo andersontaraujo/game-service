@@ -1,6 +1,7 @@
 package com.andersontaraujo.keepmygaming.games.controllers;
 
 import com.andersontaraujo.keepmygaming.games.dtos.CreateGameRequestDTO;
+import com.andersontaraujo.keepmygaming.games.dtos.CreateMultipleGamesRequestDTO;
 import com.andersontaraujo.keepmygaming.games.dtos.GameResponseDTO;
 import com.andersontaraujo.keepmygaming.games.dtos.SearchGamesResponseDTO;
 import com.andersontaraujo.keepmygaming.games.dtos.UpdateGameRequestDTO;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 import java.net.URI;
 import java.util.List;
 
@@ -55,6 +55,12 @@ public class GameController {
         return ResponseEntity.created(location).body(game);
     }
 
+    @PostMapping("/multiple")
+    public ResponseEntity<GameResponseDTO> createMultipleGames(@Valid @RequestBody CreateMultipleGamesRequestDTO request) {
+        gameService.createMultipleGames(request);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<GameResponseDTO> findGameById(@PathVariable String id) {
         GameResponseDTO game = gameService.findGameById(id);
@@ -70,6 +76,6 @@ public class GameController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGame(@PathVariable String id) {
         gameService.deleteGame(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
