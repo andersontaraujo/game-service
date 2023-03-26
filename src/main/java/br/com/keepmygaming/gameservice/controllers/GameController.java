@@ -1,9 +1,9 @@
 package br.com.keepmygaming.gameservice.controllers;
 
-import br.com.keepmygaming.gameservice.dtos.CreateMultipleGamesRequestDTO;
-import br.com.keepmygaming.gameservice.dtos.SearchGamesResponseDTO;
 import br.com.keepmygaming.gameservice.dtos.CreateGameRequestDTO;
+import br.com.keepmygaming.gameservice.dtos.CreateMultipleGamesRequestDTO;
 import br.com.keepmygaming.gameservice.dtos.GameResponseDTO;
+import br.com.keepmygaming.gameservice.dtos.SearchGamesResponseDTO;
 import br.com.keepmygaming.gameservice.dtos.UpdateGameRequestDTO;
 import br.com.keepmygaming.gameservice.services.GameService;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +31,8 @@ public class GameController {
     private final GameService gameService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<GameResponseDTO>> retrieveAllGames() {
-        List<GameResponseDTO> games = gameService.retrieveAllGames();
+    public ResponseEntity<List<GameResponseDTO>> findAllGames() {
+        List<GameResponseDTO> games = gameService.findAllGames();
         return ResponseEntity.ok(games);
     }
 

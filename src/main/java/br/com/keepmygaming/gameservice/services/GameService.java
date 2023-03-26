@@ -1,15 +1,15 @@
 package br.com.keepmygaming.gameservice.services;
 
+import br.com.keepmygaming.gameservice.dtos.CreateGameRequestDTO;
 import br.com.keepmygaming.gameservice.dtos.CreateMultipleGamesRequestDTO;
+import br.com.keepmygaming.gameservice.dtos.GameResponseDTO;
 import br.com.keepmygaming.gameservice.dtos.SearchGamesResponseDTO;
+import br.com.keepmygaming.gameservice.dtos.UpdateGameRequestDTO;
 import br.com.keepmygaming.gameservice.exceptions.ErrorMessage;
 import br.com.keepmygaming.gameservice.exceptions.GameNotFoundException;
 import br.com.keepmygaming.gameservice.models.Game;
 import br.com.keepmygaming.gameservice.repositories.GameRepository;
 import br.com.keepmygaming.gameservice.repositories.GameResponseRepository;
-import br.com.keepmygaming.gameservice.dtos.CreateGameRequestDTO;
-import br.com.keepmygaming.gameservice.dtos.GameResponseDTO;
-import br.com.keepmygaming.gameservice.dtos.UpdateGameRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ public class GameService {
 
     private final GameResponseRepository gameResponseRepository;
 
-    public List<GameResponseDTO> retrieveAllGames() {
+    public List<GameResponseDTO> findAllGames() {
 
         List<GameResponseDTO> games = new ArrayList<>();
 
