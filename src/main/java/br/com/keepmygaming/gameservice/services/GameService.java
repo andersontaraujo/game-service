@@ -2,12 +2,14 @@ package br.com.keepmygaming.gameservice.services;
 
 import br.com.keepmygaming.gameservice.dtos.CreateGameRequestDTO;
 import br.com.keepmygaming.gameservice.dtos.CreateMultipleGamesRequestDTO;
+import br.com.keepmygaming.gameservice.dtos.GameRatingResponseDTO;
 import br.com.keepmygaming.gameservice.dtos.GameResponseDTO;
 import br.com.keepmygaming.gameservice.dtos.SearchGamesResponseDTO;
 import br.com.keepmygaming.gameservice.dtos.UpdateGameRequestDTO;
 import br.com.keepmygaming.gameservice.exceptions.ErrorMessage;
 import br.com.keepmygaming.gameservice.exceptions.GameNotFoundException;
 import br.com.keepmygaming.gameservice.models.Game;
+import br.com.keepmygaming.gameservice.proxies.GameOperationsServiceProxy;
 import br.com.keepmygaming.gameservice.repositories.GameRepository;
 import br.com.keepmygaming.gameservice.repositories.GameResponseRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,8 @@ public class GameService {
 
     private final GameResponseRepository gameResponseRepository;
 
+    private final GameOperationsServiceProxy gameOperationsServiceProxy;
+
     public List<GameResponseDTO> findAllGames() {
 
         List<GameResponseDTO> games = new ArrayList<>();
@@ -37,7 +41,10 @@ public class GameService {
 
         if (!cachedGames.iterator().hasNext()) {
             games.addAll(gameRepository.findAll().stream()
-                    .map(game -> modelMapper.map(game, GameResponseDTO.class))
+                    .map(game -> {
+                        GameResponseDTO gameResponse = modelMapper.map(game, GameResponseDTO.class);
+                        return enrichGameWithScore(gameResponse);
+                    })
                     .collect(Collectors.toList()));
 
             gameResponseRepository.saveAll(games);
@@ -60,7 +67,10 @@ public class GameService {
     private SearchGamesResponseDTO composeSearchResponse(Page<Game> games) {
 
         List<GameResponseDTO> content = games.getContent().stream()
-                .map(game -> modelMapper.map(game, GameResponseDTO.class))
+                .map(game -> {
+                    GameResponseDTO gameResponse = modelMapper.map(game, GameResponseDTO.class);
+                    return enrichGameWithScore(gameResponse);
+                })
                 .collect(Collectors.toList());
 
         return SearchGamesResponseDTO.builder()
@@ -86,7 +96,10 @@ public class GameService {
 
     public GameResponseDTO findGameById(String id) {
         return gameRepository.findById(id)
-                .map(game -> modelMapper.map(game, GameResponseDTO.class))
+                .map(game -> {
+                    GameResponseDTO gameResponse = modelMapper.map(game, GameResponseDTO.class);
+                    return enrichGameWithScore(gameResponse);
+                })
                 .orElseThrow(() -> new GameNotFoundException(ErrorMessage.GAME_NOT_FOUND_MESSAGE, id));
     }
 
@@ -112,5 +125,17 @@ public class GameService {
         Game gameToDelete = gameRepository.findById(id)
                 .orElseThrow(() -> new GameNotFoundException(ErrorMessage.GAME_NOT_FOUND_MESSAGE, id));
         gameRepository.delete(gameToDelete);
+    }
+
+    private GameResponseDTO enrichGameWithScore(GameResponseDTO game) {
+        GameRatingResponseDTO gameRating = gameOperationsServiceProxy.retrieveGameRating(game.getId());
+        if (gameRating == null) {
+            return game.toBuilder()
+                    .score(0.0)
+                    .build();
+        }
+        return game.toBuilder()
+                .score(gameRating.getAverageScore())
+                .build();
     }
 }

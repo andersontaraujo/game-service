@@ -22,6 +22,7 @@ public class GameResponseDTO {
     private String publisherName;
     private String developerName;
     private Integer yearOfRelease;
+    private Double score;
     private List<Platform> platforms;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdDate;
